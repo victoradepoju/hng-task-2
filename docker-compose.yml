@@ -1,0 +1,23 @@
+services:
+  postgres:
+    container_name: postgres-hng-two
+    image: postgres
+    environment:
+      POSTGRES_USER: victor
+      POSTGRES_PASSWORD: pass
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: hng-two-db
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - 5432:5432
+    networks:
+      - hng
+    restart: unless-stopped
+
+networks:
+  hng:
+    driver: bridge
+volumes:
+  postgres:
+    driver: local

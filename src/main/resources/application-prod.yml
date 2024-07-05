@@ -1,0 +1,21 @@
+server:
+  port: 8088
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${PROD_DB_HOST}:${PROD_DB_PORT}/${PROD_DB_NAME}
+    username: ${PROD_DB_USERNAME}
+    password: ${PROD_DB_PASSWORD}
+#    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+security:
+  jwt:
+    key: 0676af03cc10c46947f425a7a4f1d9669a7aedb62ed74a274b0ee0bd20fc08a6
