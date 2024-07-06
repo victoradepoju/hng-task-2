@@ -31,7 +31,7 @@ public class AuthenticationService {
         User user = userMapper.createUserFromRegisterRequest(registerRequest);
 //        userRepository.save(user);
         String result = authenticate(registerRequest.email(), registerRequest.password(), user);
-        return buildAuthResponse(result, user);
+        return buildAuthResponse(result, user, "register");
     }
 
     @Transactional
@@ -41,7 +41,7 @@ public class AuthenticationService {
         String token = authenticate(loginRequest.email(), loginRequest.password(), user);
 
 
-        return buildAuthResponse(token, user);
+        return buildAuthResponse(token, user, "login");
     }
 
     private void validateEmailNotExist(String email) {
@@ -63,10 +63,11 @@ public class AuthenticationService {
         }
     }
 
-    private AuthResponse buildAuthResponse(String result, User user) {
+    private AuthResponse buildAuthResponse(String result, User user, String path) {
         return AuthResponse.builder()
                 .status("success")
-                .message("Registration successful")
+                .message(path.equals("login") ? "Login successful"
+                        : "Registration successful")
                 .data(userMapper.toUserData(result, user))
                 .build();
     }

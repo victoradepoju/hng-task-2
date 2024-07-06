@@ -12,7 +12,9 @@ import com.example.hng_task2.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +27,13 @@ public class OrganisationService {
     private final OrganisationMapper organisationMapper;
     private final UserRepository userRepository;
 
+    @Transactional
     public AuthResponse getAllowedOrganisation(Authentication activeUser) {
         User user = (User) activeUser.getPrincipal();
+
+        // fixed lazy initialization error...
+        user = userRepository.findById(user.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         List<Organisation> organisations = new ArrayList<>(user.getOrganisations());
 
@@ -58,20 +65,27 @@ public class OrganisationService {
                 .build();
     }
 
+    @Transactional
     public AuthResponse getAllowedOrganisationById(
             String orgId,
             Authentication activeUser
     ) {
         User user = (User) activeUser.getPrincipal();
 
-        List<Organisation> organisations = new ArrayList<>(user.getOrganisations());
-        organisations.addAll(organisationRepository.findByCreator(user));
+        userRepository.findById(user.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+//        List<Organisation> organisations = new ArrayList<>(user.getOrganisations());
+//        organisations.addAll(organisationRepository.findByCreator(user));
+
+        Organisation organisation = organisationRepository.findById(orgId)
+                .orElseThrow(() -> new EntityNotFoundException("Organisation not found"));
 
         // Find the organisation by orgId
-        Organisation organisation = organisations.stream()
-                .filter(org -> org.getOrgId().equals(orgId))
-                .findFirst()
-                .orElseThrow(() -> new NotPermittedException("Organisation not found or user not allowed to access it"));
+//        Organisation organisation = organisations.stream()
+//                .filter(org -> org.getOrgId().equals(orgId))
+//                .findFirst()
+//                .orElseThrow(() -> new NotPermittedException("Organisation not found or user not allowed to access it"));
 
         return AuthResponse.builder()
                 .status("success")
@@ -89,6 +103,7 @@ public class OrganisationService {
                 organisation.getCreator().equals(user);
     }
 
+    @Transactional
     public AuthResponse create(
             CreateOrganisationRequest orgRequest,
             Authentication activeUser
@@ -99,6 +114,9 @@ public class OrganisationService {
             );
         }
         User user = (User) activeUser.getPrincipal();
+        user = userRepository.findById(user.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
         Organisation organisation = Organisation.builder()
                 .name(orgRequest.name())
                 .description(orgRequest.description())
@@ -119,12 +137,15 @@ public class OrganisationService {
                 .build();
     }
 
+    @Transactional
     public AuthResponse addToOrganisation(
             String orgId,
             AddUserToOrganisationRequest request,
             Authentication activeUser
     ) {
         User user = (User) activeUser.getPrincipal();
+        userRepository.findById(user.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         // Find the organisation by orgId
         Organisation organisation = organisationRepository.findById(orgId)
@@ -142,7 +163,10 @@ public class OrganisationService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         if (organisation.getUsers().contains(userToAdd)) {
-            throw new UserAlreadyInOrganisationException("User already exists in the organisation");
+            return AuthResponse.builder()
+                    .status("success")
+                    .message("User added to organisation successfully")
+                    .build();
         }
 
         organisation.getUsers().add(userToAdd);

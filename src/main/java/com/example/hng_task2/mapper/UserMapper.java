@@ -28,12 +28,14 @@ public class UserMapper {
                 .email(registerRequest.email())
                 .password(passwordEncoder.encode(registerRequest.password()))
                 .phone(registerRequest.phone())
+                .organisations(new ArrayList<>())
                 .build();
 
         user = userRepository.save(user);
 
         Organisation organisation = new Organisation();
         organisation.setName(registerRequest.firstName() + "'s Organisation");
+        organisation.setCreator(user);
         // use a mutable list...
         organisation.setUsers(new ArrayList<>(List.of(user)));
         organisation = orgaisationRepository.save(organisation);
@@ -49,7 +51,7 @@ public class UserMapper {
                 .accessToken(result)
                 .user(
                         UserResponse.builder()
-                                .userId((user.getUserId()).toString())
+                                .userId((user.getUserId()))
                                 .firstName(user.getFirstName())
                                 .lastName(user.getLastName())
                                 .email(user.getEmail())

@@ -1,7 +1,6 @@
 package com.example.hng_task2.exception;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -9,15 +8,12 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.function.EntityResponse;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -121,7 +117,9 @@ public class GlobalExceptionHandler {
    }
 
    @ExceptionHandler(UsernameNotFoundException.class)
-   public ResponseEntity<AuthErrorResponse> handleAuthExceptions(UsernameNotFoundException ex) {
+   public ResponseEntity<AuthErrorResponse> handleAuthExceptions(
+           UsernameNotFoundException ex
+   ) {
             var authErr = new AuthErrorResponse(
                     "Bad request",
                     ex.getMessage(),

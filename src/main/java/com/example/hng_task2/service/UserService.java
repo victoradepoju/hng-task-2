@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final OrganisationRepository organisationRepository;
-    private final UserMapper userMapper;
 
     public AuthResponse allowedUsers(String userId, Authentication loggedInUser) {
 
@@ -31,11 +30,13 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         User activeUser = (User) loggedInUser.getPrincipal();
+        User active = userRepository.findByEmail(activeUser.getEmail())
+                .orElseThrow(()-> new UsernameNotFoundException("User not found"));
 
-        if (activeUser.getUserId().equals(userId) ||
-                activeUser.getOrganisations().stream()
+        if (active.getUserId().equals(userId) ||
+                active.getOrganisations().stream()
                         .anyMatch(organisation -> organisation.getUsers().contains(user)) ||
-                organisationRepository.findByCreator(activeUser).stream()
+                organisationRepository.findByCreator(active).stream()
                         .anyMatch(organisation -> organisation.getUsers().contains(user))
         ) {
             return AuthResponse.builder()
