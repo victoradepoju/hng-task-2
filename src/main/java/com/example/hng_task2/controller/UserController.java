@@ -1,6 +1,6 @@
 package com.example.hng_task2.controller;
 
-import com.example.hng_task2.dto.AuthResponse;
+import com.example.hng_task2.dto.AppResponse;
 import com.example.hng_task2.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<AuthResponse> getAllowedUser(
+    public ResponseEntity<AppResponse> getAllowedUser(
             @PathVariable(name = "id") String id,
             Authentication loggedInUser
     ) {

@@ -1,6 +1,6 @@
 package com.example.hng_task2.controller;
 
-import com.example.hng_task2.dto.AuthResponse;
+import com.example.hng_task2.dto.AppResponse;
 import com.example.hng_task2.dto.LoginRequest;
 import com.example.hng_task2.dto.RegisterRequest;
 import com.example.hng_task2.service.AuthenticationService;
@@ -23,7 +23,7 @@ public class AuthController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(
+    public ResponseEntity<AppResponse> register(
             @RequestBody @Valid RegisterRequest registerRequest
     ) {
         try {
@@ -36,7 +36,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(
+    public ResponseEntity<AppResponse> login(
             @RequestBody @Valid LoginRequest loginRequest
     ) {
         try {

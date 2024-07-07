@@ -1,13 +1,16 @@
 package com.example.hng_task2.dto;
 
+import com.example.hng_task2.dto.serializer.DataResponseSerializer;
+import com.example.hng_task2.dto.serializer.ShowNullWrapper;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Builder;
-import lombok.Data;
 
 import java.util.List;
 
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonSerialize(using = DataResponseSerializer.class)
 public record DataResponse(
         // for authentication
         String accessToken,
@@ -18,7 +21,7 @@ public record DataResponse(
         String firstName,
         String lastName,
         String email,
-        String phone,
+        ShowNullWrapper phone,
 
         // "organisations": [{}]
         List<OrganisationListResponse> organisations,
@@ -26,7 +29,7 @@ public record DataResponse(
         // organisation by id
         String orgId,
         String name,
-        String description
+        ShowNullWrapper description
 ) {
 
 }

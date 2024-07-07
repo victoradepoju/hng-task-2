@@ -25,7 +25,7 @@ public class AuthenticationService {
     private final UserMapper userMapper;
 
     @Transactional
-    public AuthResponse register(RegisterRequest registerRequest) {
+    public AppResponse register(RegisterRequest registerRequest) {
         validateEmailNotExist(registerRequest.email());
 
         User user = userMapper.createUserFromRegisterRequest(registerRequest);
@@ -35,7 +35,7 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public AuthResponse login(LoginRequest loginRequest) {
+    public AppResponse login(LoginRequest loginRequest) {
         var user = userRepository.findByEmail(loginRequest.email())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         String token = authenticate(loginRequest.email(), loginRequest.password(), user);
@@ -63,8 +63,8 @@ public class AuthenticationService {
         }
     }
 
-    private AuthResponse buildAuthResponse(String result, User user, String path) {
-        return AuthResponse.builder()
+    private AppResponse buildAuthResponse(String result, User user, String path) {
+        return AppResponse.builder()
                 .status("success")
                 .message(path.equals("login") ? "Login successful"
                         : "Registration successful")

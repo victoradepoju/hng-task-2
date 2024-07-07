@@ -1,7 +1,7 @@
 package com.example.hng_task2.controller;
 
 import com.example.hng_task2.dto.AddUserToOrganisationRequest;
-import com.example.hng_task2.dto.AuthResponse;
+import com.example.hng_task2.dto.AppResponse;
 import com.example.hng_task2.dto.CreateOrganisationRequest;
 import com.example.hng_task2.service.OrganisationService;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +17,14 @@ public class OrganisationController {
     private final OrganisationService organisationService;
 
     @GetMapping
-    public ResponseEntity<AuthResponse> getAllowedOrganisations(
+    public ResponseEntity<AppResponse> getAllowedOrganisations(
             Authentication activeUser
     ) {
         return ResponseEntity.ok(organisationService.getAllowedOrganisation(activeUser));
     }
 
     @GetMapping("/{orgId}")
-    public ResponseEntity<AuthResponse> getAllowedOrganisationById(
+    public ResponseEntity<AppResponse> getAllowedOrganisationById(
             @PathVariable(name = "orgId") String orgId,
             Authentication activeUser
     ) {
@@ -35,7 +35,7 @@ public class OrganisationController {
     }
 
     @PostMapping
-    public ResponseEntity<AuthResponse> createOrganisation(
+    public ResponseEntity<AppResponse> createOrganisation(
             @RequestBody CreateOrganisationRequest orgRequest,
             Authentication activeUser
     ) {
@@ -45,7 +45,7 @@ public class OrganisationController {
     }
 
     @PostMapping("/{orgId}/users")
-    public ResponseEntity<AuthResponse> addUserToOrganisation(
+    public ResponseEntity<AppResponse> addUserToOrganisation(
             @PathVariable(name = "orgId") String orgId,
             @RequestBody AddUserToOrganisationRequest request,
             Authentication activeUser

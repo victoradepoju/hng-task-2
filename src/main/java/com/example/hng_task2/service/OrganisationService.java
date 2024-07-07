@@ -1,11 +1,11 @@
 package com.example.hng_task2.service;
 
 import com.example.hng_task2.dto.*;
+import com.example.hng_task2.dto.serializer.ShowNullWrapper;
 import com.example.hng_task2.entity.Organisation;
 import com.example.hng_task2.entity.User;
 import com.example.hng_task2.exception.NotPermittedException;
 import com.example.hng_task2.exception.OrganisationNameEmptyException;
-import com.example.hng_task2.exception.UserAlreadyInOrganisationException;
 import com.example.hng_task2.mapper.OrganisationMapper;
 import com.example.hng_task2.repository.OrganisationRepository;
 import com.example.hng_task2.repository.UserRepository;
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class OrganisationService {
     private final UserRepository userRepository;
 
     @Transactional
-    public AuthResponse getAllowedOrganisation(Authentication activeUser) {
+    public AppResponse getAllowedOrganisation(Authentication activeUser) {
         User user = (User) activeUser.getPrincipal();
 
         // fixed lazy initialization error...
@@ -56,7 +55,7 @@ public class OrganisationService {
                 .map(organisationMapper::mapToOrganisationListResponse)
                 .toList();
 
-        return AuthResponse.builder()
+        return AppResponse.builder()
                 .status("success")
                 .message("Organisations found")
                 .data(DataResponse.builder()
@@ -66,7 +65,7 @@ public class OrganisationService {
     }
 
     @Transactional
-    public AuthResponse getAllowedOrganisationById(
+    public AppResponse getAllowedOrganisationById(
             String orgId,
             Authentication activeUser
     ) {
@@ -87,13 +86,13 @@ public class OrganisationService {
 //                .findFirst()
 //                .orElseThrow(() -> new NotPermittedException("Organisation not found or user not allowed to access it"));
 
-        return AuthResponse.builder()
+        return AppResponse.builder()
                 .status("success")
                 .message("Organisation found")
                 .data(DataResponse.builder()
                         .orgId(organisation.getOrgId())
                         .name(organisation.getName())
-                        .description(organisation.getDescription())
+                        .description(ShowNullWrapper.of(organisation.getDescription()))
                         .build())
                 .build();
     }
@@ -104,11 +103,11 @@ public class OrganisationService {
     }
 
     @Transactional
-    public AuthResponse create(
+    public AppResponse create(
             CreateOrganisationRequest orgRequest,
             Authentication activeUser
     ) {
-        if (orgRequest.name().isEmpty() || orgRequest.name().isBlank()) {
+        if (orgRequest.name() == null) {
             throw new OrganisationNameEmptyException(
                     "An Organisation must have a name"
             );
@@ -124,21 +123,21 @@ public class OrganisationService {
                 .creator(user)
                 .build();
         organisationRepository.save(organisation);
-        return AuthResponse.builder()
+        return AppResponse.builder()
                 .status("success")
                 .message("Organisation created successfully")
                 .data(
                         DataResponse.builder()
                                 .orgId(organisation.getOrgId())
                                 .name(organisation.getName())
-                                .description(organisation.getDescription())
+                                .description(ShowNullWrapper.of(organisation.getDescription()))
                                 .build()
                 )
                 .build();
     }
 
     @Transactional
-    public AuthResponse addToOrganisation(
+    public AppResponse addToOrganisation(
             String orgId,
             AddUserToOrganisationRequest request,
             Authentication activeUser
@@ -163,7 +162,7 @@ public class OrganisationService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         if (organisation.getUsers().contains(userToAdd)) {
-            return AuthResponse.builder()
+            return AppResponse.builder()
                     .status("success")
                     .message("User added to organisation successfully")
                     .build();
@@ -175,7 +174,7 @@ public class OrganisationService {
         organisationRepository.save(organisation);
         userRepository.save(userToAdd);
 
-        return AuthResponse.builder()
+        return AppResponse.builder()
                 .status("success")
                 .message("User added to organisation successfully")
                 .build();
