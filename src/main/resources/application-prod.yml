@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://${PROD_DB_HOST}:${PROD_DB_PORT}/${POSTGRES_DB}
+    url: jdbc:postgresql://roundhouse.proxy.rlwy.net:39610/railway
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
 
