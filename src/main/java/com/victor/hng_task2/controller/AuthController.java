@@ -6,6 +6,7 @@ import com.victor.hng_task2.dto.RegisterRequest;
 import com.victor.hng_task2.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -22,7 +23,7 @@ import java.net.URI;
 public class AuthController {
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     public ResponseEntity<AppResponse> register(
             @RequestBody @Valid RegisterRequest registerRequest
     ) {
@@ -35,7 +36,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/login")
+    @PostMapping(value = "/login", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     public ResponseEntity<AppResponse> login(
             @RequestBody @Valid LoginRequest loginRequest
     ) {

@@ -6,6 +6,7 @@ import com.victor.hng_task2.dto.CreateOrganisationRequest;
 import com.victor.hng_task2.service.OrganisationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class OrganisationController {
         ));
     }
 
-    @PostMapping
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     public ResponseEntity<AppResponse> createOrganisation(
             @RequestBody CreateOrganisationRequest orgRequest,
             Authentication activeUser
@@ -44,7 +45,7 @@ public class OrganisationController {
         );
     }
 
-    @PostMapping("/{orgId}/users")
+    @PostMapping(value = "/{orgId}/users", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     public ResponseEntity<AppResponse> addUserToOrganisation(
             @PathVariable(name = "orgId") String orgId,
             @RequestBody AddUserToOrganisationRequest request,
