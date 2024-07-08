@@ -4,8 +4,8 @@ server:
 spring:
   datasource:
     url: jdbc:postgresql://roundhouse.proxy.rlwy.net:39610/railway
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
+    username: postgres
+    password: zDOjFBVDexPEoDHodyqBHnHocbODbNil
 
 #    driver-class-name: org.postgresql.Driver
   jpa:
